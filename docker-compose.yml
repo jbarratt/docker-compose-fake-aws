@@ -1,0 +1,32 @@
+---
+demo:
+  build: democontainer
+  environment:
+    - S3_BUCKET_NAME=testbucket
+    - AWS_SECRET_ACCESS_KEY=fake
+    - AWS_ACCESS_KEY_ID=alsofake
+    - SQS_QUEUE_NAME=testqueue
+    - SQS_REGION=us-west-2
+    - SQS_SECURE=False
+    - SQS_PORT=9324
+  links:
+    - fakesqs:us-west-2.queue.amazonaws.com
+    - fakes3ssl:testbucket.s3.amazonaws.com
+fakesqs:
+  image: pakohan/elasticmq
+  command: ["java", "-jar", "elasticmq-server-0.8.5.jar"]
+  ports:
+    - "9324:9324"
+fakes3:
+  image: lphoward/fake-s3
+  ports:
+    - "4569:4569"
+fakes3ssl:
+  image: cbachich/ssl-proxy
+  ports:
+    - "443:443"
+  links:
+    - fakes3:proxyapp
+  environment:
+    - PORT=443
+    - TARGET_PORT=4569
