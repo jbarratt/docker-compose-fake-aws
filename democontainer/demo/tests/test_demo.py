@@ -11,7 +11,7 @@ def test_key_contents():
     b = c.get_bucket(bucket)
 
     keys = [k.name for k in b.list()]
-    assert '/hello.txt' in keys
+    assert 'hello.txt' in keys
 
     key = b.get_key('hello.txt')
     contents = key.get_contents_as_string()
